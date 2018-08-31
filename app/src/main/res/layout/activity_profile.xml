@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    tools:context=".ProfileActivity">
+
+    <TextView
+        android:id="@+id/mUIDTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ログイン中のユーザーID"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/UIDTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="UID"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/mEmailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="ログイン中のアカウントのメールアドレス"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/EmailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="email"
+        android:textAlignment="center" />
+
+
+
+</LinearLayout>
+
+
