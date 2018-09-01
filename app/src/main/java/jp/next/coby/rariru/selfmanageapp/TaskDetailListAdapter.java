@@ -144,27 +144,15 @@ public class TaskDetailListAdapter extends BaseAdapter {
             String body = answer.getBody();
             String name = answer.getName();
 
-            try {
-                user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            } catch (NullPointerException e) {
-                /*View view = ((MainActivity)mContext).findViewById(R.id.drawer_layout);
-                Snackbar
-                        .make(view, "ログインしないと表示できません", Snackbar.LENGTH_INDEFINITE)
-                        .show();
-                Intent intent = new Intent(mContext,SettingActivity.class);
-                startActivity(intent);
 
-                Toast.makeText(mContext, "ログインしないと表示できません", Toast.LENGTH_LONG).show();*/
-            }
+            user = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            //ログインしていてかつタスク詳細画面に入った場合の処理
-            //if(user != null){
-                TextView bodyTextView = (TextView) convertView.findViewById(R.id.bodyTextView);
-                bodyTextView.setText(body);
+            TextView bodyTextView = (TextView) convertView.findViewById(R.id.bodyTextView);
+            bodyTextView.setText(body);
 
-                TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
-                nameTextView.setText(user);
-            //}
+            TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
+            nameTextView.setText(user);
+            
         }
 
         return convertView;

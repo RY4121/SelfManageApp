@@ -1,7 +1,9 @@
 package jp.next.coby.rariru.selfmanageapp;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
@@ -352,7 +354,26 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         realm.commitTransaction();
 
         realm.close();
+
+        //通知処理
+        //PendingIntent.FLAG_UPDATE_CURRENTは既存のPendingIntentがあれば、それはそのままでextraのデータだけ置き換えるという指定
+        //これがあることでタスクの更新が可能となる
+        Intent resultIntent = new Intent(getApplicationContext(),TaskAlarmReceiver.class);
+        resultIntent.putExtra(MainActivity.EXTRA_TASK,mTask.getId());
+        //時限式のintent処理
+        PendingIntent resultPendingIntent = PendingIntent.getBroadcast(
+                this,
+                mTask.getId(),
+                resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        //RTC_WAKEUP = UTC時間を指定する。画面スリープ中でもアラームを発行する
+        //第二引数 = タスクの時間をUTC時間で指定している
+        alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),resultPendingIntent);
     }
+
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {

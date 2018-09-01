@@ -1,5 +1,7 @@
 package jp.next.coby.rariru.selfmanageapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -241,10 +243,15 @@ public class MainActivity extends AppCompatActivity
                         intent.putExtra("question", mQuestionArrayList.get(position));
                         startActivity(intent);
                     } else if (user == null) {
-                        Snackbar.make(view, "ログインしてから選択してください", Snackbar.LENGTH_LONG).show();
-                        /*// ログインしていなければログイン画面に遷移させる
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);*/
+                        Snackbar.make(view, "ログインしてから選択してください", Snackbar.LENGTH_LONG)
+                                .setAction("Login", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }).show();
+
                     }
                 }
             }
@@ -273,6 +280,17 @@ public class MainActivity extends AppCompatActivity
                             mRealm.beginTransaction();
                             results.deleteAllFromRealm();
                             mRealm.commitTransaction();
+
+                            Intent resultIntent = new Intent(getApplicationContext(), TaskAlarmReceiver.class);
+                            PendingIntent resultPendingIntent = PendingIntent.getBroadcast(
+                                    MainActivity.this,
+                                    task.getId(),
+                                    resultIntent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
+                            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                            alarmManager.cancel(resultPendingIntent);
 
                             reloadListView();
                         }
@@ -383,12 +401,20 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_favorite);
+
         if (user == null) {//ログインしていないとき
             menuItem.setVisible(false);
         } else {
-            menuItem.setVisible(true);
+            //menuItem.setVisible(true);
+            menuItem.setVisible(false);
         }
 
+        //2018年9月1日公開用処理
+        MenuItem menuItem1,menuItem2;
+        menuItem1 = menu.findItem(R.id.nav_hobby);
+        //menuItem1.setVisible(false);
+        menuItem2 = menu.findItem(R.id.nav_life);
+        menuItem2.setVisible(false);
 
         // 1:趣味を既定の選択とする
         if (mGenre == 0) {

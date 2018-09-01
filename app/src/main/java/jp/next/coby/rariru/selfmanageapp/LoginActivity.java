@@ -2,6 +2,7 @@ package jp.next.coby.rariru.selfmanageapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -127,7 +128,9 @@ public class LoginActivity extends AppCompatActivity {
                     mProgress.dismiss();
 
                     // Activityを閉じる
-                    finish();
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                    //finish();
 
                 } else {
                     // 失敗した場合
