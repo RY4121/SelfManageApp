@@ -51,7 +51,7 @@ import java.util.Map;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class InputActivity extends AppCompatActivity implements View.OnClickListener, DatabaseReference.CompletionListener{
+public class InputActivity extends AppCompatActivity implements View.OnClickListener, DatabaseReference.CompletionListener {
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private static final int CHOOSER_REQUEST_CODE = 100;
@@ -65,6 +65,9 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
     private int mGenre;
     private Uri mPictureUri;
 
+    //追加用
+    private Button mCancelButton;
+    private EditText mCategoryText;
     //日時ボタンの処理用
     private int mYear, mMonth, mDay, mHour, mMinute;
     private Button mDateButton, mTimeButton, mCategoryButton;
@@ -122,7 +125,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question_send);
+        setContentView(R.layout.activity_input);
 
         // 渡ってきたジャンルの番号を保持する
         Bundle extras = getIntent().getExtras();
@@ -133,19 +136,22 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
 
         mTitleText = (EditText) findViewById(R.id.titleText);
         mBodyText = (EditText) findViewById(R.id.bodyText);
+        mCategoryText = (EditText) findViewById(R.id.category_edit_text);
 
         mSendButton = (Button) findViewById(R.id.sendButton);
         mSendButton.setOnClickListener(this);
         mSendButton.setText("OK");
 
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setOnClickListener(this);
+        //mImageView.setOnClickListener(this);
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("投稿中...");
 
 
         //UI部品追加
+        mCancelButton = (Button) findViewById(R.id.cancel_button);
+
         //日時用
         mDateButton = (Button) findViewById(R.id.date_button);
         mDateButton.setOnClickListener(mOnDataClickListener);
@@ -153,8 +159,11 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         mTimeButton.setOnClickListener(mOnTimeClickListener);
         mCategoryButton = (Button) findViewById(R.id.category_button);
         mCategoryButton.setOnClickListener(mOnCategoryClickListener);
+        mCategoryButton.setVisibility(View.INVISIBLE);
 
         //追加部品
+
+
         // EXTRA_TASK から Task の id を取得して、 id から Task のインスタンスを取得する
         Intent intent = getIntent();
         int taskId = intent.getIntExtra(MainActivity.EXTRA_TASK, -1);
@@ -257,7 +266,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
             im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
             // 添付画像を取得する
-            drawable = (BitmapDrawable) mImageView.getDrawable();
+            //drawable = (BitmapDrawable) mImageView.getDrawable();
 
             // 添付画像が設定されていれば画像を取り出してBASE64エンコードする
             if (drawable != null) {
@@ -267,9 +276,11 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
                 String bitmapString = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
             }
 
-                addTask();
-                finish();
+            addTask();
+            finish();
 
+        } else if (v == mCancelButton) {
+            finish();
         }
     }
 
@@ -332,17 +343,21 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
                 identifier = 0;
             }
             mTask.setId(identifier);
-            Log.d("cat","タスクがnullです");
-        }else{
+            Log.d("cat", "タスクがnullです");
+        } else {
             //Toast.makeText(this,"タスクがnullではありません",Toast.LENGTH_LONG).show();
-            Log.d("cat","タスクがnullではありません");
+            Log.d("cat", "タスクがnullではありません");
         }
 
         String title = mTitleText.getText().toString();
         String content = mBodyText.getText().toString();
+        String category = mCategoryText.getText().toString();
 
         mTask.setTitle(title);
         mTask.setContents(content);
+
+        mTask.setCategory(category);
+
         GregorianCalendar calendar = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
         Date date = calendar.getTime();
         mTask.setDate(date);
@@ -358,8 +373,8 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         //通知処理
         //PendingIntent.FLAG_UPDATE_CURRENTは既存のPendingIntentがあれば、それはそのままでextraのデータだけ置き換えるという指定
         //これがあることでタスクの更新が可能となる
-        Intent resultIntent = new Intent(getApplicationContext(),TaskAlarmReceiver.class);
-        resultIntent.putExtra(MainActivity.EXTRA_TASK,mTask.getId());
+        Intent resultIntent = new Intent(getApplicationContext(), TaskAlarmReceiver.class);
+        resultIntent.putExtra(MainActivity.EXTRA_TASK, mTask.getId());
         //時限式のintent処理
         PendingIntent resultPendingIntent = PendingIntent.getBroadcast(
                 this,
@@ -368,10 +383,10 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         //RTC_WAKEUP = UTC時間を指定する。画面スリープ中でもアラームを発行する
         //第二引数 = タスクの時間をUTC時間で指定している
-        alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),resultPendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), resultPendingIntent);
     }
 
 
@@ -383,7 +398,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
             //CurrentActivityを閉じて遷移元のActivityに戻る
             finish();
         } else {
-            Snackbar.make(findViewById(android.R.id.content), "投稿に失敗しました", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(android.R.id.content), "タスク登録に失敗しました", Snackbar.LENGTH_LONG).show();
         }
     }
 }

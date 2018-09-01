@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,6 +69,9 @@ public class MainActivity extends AppCompatActivity
     private SmallTaskAdapter mTaskAdapter;
     //パッケージ名を含めた文字列をキーとすることでユニークなものにしている
     public final static String EXTRA_TASK = "jp.next.coby.rariru.selfmanageapp.TASK";
+
+    //検索ボックス
+    SearchView mSearchView;
 
     //Realmの設定
     private Realm mRealm;
@@ -313,8 +317,38 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // ★  追加
+        MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
+        mSearchView = (android.support.v7.widget.SearchView) menuItem.getActionView();
+        mSearchView.setQueryHint("タスク名検索キーワード");
+        mSearchView.setOnQueryTextListener(this.onQueryTextListener);
+
         return true;
     }
+
+    // ★ 追加
+    private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String searchWord) {
+            // String searchResult = mSearchView.toString();
+            //Build the query looking at all users;
+            RealmResults<Task> query = mRealm.where(Task.class)
+                    .like("title","*"+searchWord+"*").findAll();
+            // 上記の結果を、TaskList としてセットする
+            mTaskAdapter.setSmallTaskList(mRealm.copyFromRealm(query));
+            // TaskのListView用のアダプタに渡す
+            mListView.setAdapter(mTaskAdapter);
+            // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+            mTaskAdapter.notifyDataSetChanged();
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return false;
+        }
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -322,16 +356,11 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
-            startActivity(intent);
+            //startActivity(intent);
             return true;
         } else if (id == R.id.action_profiles) {
-            // if(user != null) {
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-            startActivity(intent);
-            /*}else if(user == null) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-            }*/
+            //startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -415,6 +444,7 @@ public class MainActivity extends AppCompatActivity
         //menuItem1.setVisible(false);
         menuItem2 = menu.findItem(R.id.nav_life);
         menuItem2.setVisible(false);
+
 
         // 1:趣味を既定の選択とする
         if (mGenre == 0) {

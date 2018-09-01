@@ -21,10 +21,12 @@ public class CategoryActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
+        String[] cate = new String[]{"趣味","生活","健康","仕事","学校","勉強","娯楽"};
+
         //データを準備
         ArrayList<String> items = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            items.add("items-" + i);
+        for (int i = 0; i <7; i++) {
+            items.add(cate[i]);
         }
 
         //Adapterの設定

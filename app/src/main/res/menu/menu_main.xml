@@ -15,4 +15,10 @@
         android:orderInCategory="100"
         android:title="プロフィール"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/search_menu_search_view"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always"
+        android:title="SearchView" />
 </menu>
