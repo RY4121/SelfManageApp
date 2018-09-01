@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.lang.String.valueOf;
 
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity
     FirebaseUser user;
     NavigationView navigationView;
     private FloatingActionButton fab;
+
+    //個人タグ用の変数
+    private SmallTaskAdapter mTaskAdapter;
 
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
@@ -150,22 +154,24 @@ public class MainActivity extends AppCompatActivity
                 if (mGenre == 0) {
                     Snackbar.make(view, "ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show();
                     return;
+                }else if(mGenre == 1){
+                    //個人用タグでの挙動
+                }else if(mGenre == 2){
+                    //共通タグでの挙動
+                    // ログイン済みのユーザーを取得する
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+
+                    if (user == null) {
+                        // ログインしていなければログイン画面に遷移させる
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);
+                    } else {
+                        // ジャンルを渡して質問作成画面を起動する
+                        Intent intent = new Intent(getApplicationContext(), TaskSendActivity.class);
+                        intent.putExtra("genre", mGenre);
+                        startActivity(intent);
+                    }
                 }
-
-                // ログイン済みのユーザーを取得する
-                user = FirebaseAuth.getInstance().getCurrentUser();
-
-                if (user == null) {
-                    // ログインしていなければログイン画面に遷移させる
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
-                } else {
-                    // ジャンルを渡して質問作成画面を起動する
-                    Intent intent = new Intent(getApplicationContext(), TaskSendActivity.class);
-                    intent.putExtra("genre", mGenre);
-                    startActivity(intent);
-                }
-
             }
 
         });
@@ -253,11 +259,30 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_hobby) {
             mToolbar.setTitle("個人");
             mGenre = 1;
-            fab.setVisibility(View.INVISIBLE);
+            //fab.setVisibility(View.INVISIBLE);
+
+            mTaskAdapter = new SmallTaskAdapter(MainActivity.this);
+            reloadListView();
         } else if (id == R.id.nav_life) {
             mToolbar.setTitle("共通");
             mGenre = 2;
             fab.setVisibility(View.VISIBLE);
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+
+            // --- ここから ---
+            // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
+            mQuestionArrayList.clear();
+            mAdapter.setQuestionArrayList(mQuestionArrayList);
+            mListView.setAdapter(mAdapter);
+
+            // 選択したジャンルにリスナーを登録する
+            if (mGenreRef != null) {
+                mGenreRef.removeEventListener(mEventListener);
+            }
+            mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
+            mGenreRef.addChildEventListener(mEventListener);
         } else if (id == R.id.nav_favorite) {
             Intent intent = new Intent(getApplicationContext(), FavoriteActivity.class);
             //intent.putExtra("question", mQuestion);
@@ -265,23 +290,19 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
 
-        // --- ここから ---
-        // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
-        mQuestionArrayList.clear();
-        mAdapter.setQuestionArrayList(mQuestionArrayList);
-        mListView.setAdapter(mAdapter);
-
-        // 選択したジャンルにリスナーを登録する
-        if (mGenreRef != null) {
-            mGenreRef.removeEventListener(mEventListener);
-        }
-        mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
-        mGenreRef.addChildEventListener(mEventListener);
 
         return true;
+    }
+
+    //個人用タグリスト編集メソッド
+    private void reloadListView(){
+        List<String> taskList = new ArrayList<>();
+        taskList.add("aaa");
+
+        mTaskAdapter.setSmallTaskList(taskList);
+        mListView.setAdapter(mTaskAdapter);
+        mTaskAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -116,7 +116,7 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         mGenre = extras.getInt("genre");
 
         // UIの準備
-        setTitle("質問作成");
+        setTitle("タスク作成");
 
         mTitleText = (EditText) findViewById(R.id.titleText);
         mBodyText = (EditText) findViewById(R.id.bodyText);
