@@ -1,5 +1,6 @@
 package jp.next.coby.rariru.selfmanageapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +35,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 import static java.lang.String.valueOf;
 
@@ -56,6 +64,17 @@ public class MainActivity extends AppCompatActivity
 
     //個人タグ用の変数
     private SmallTaskAdapter mTaskAdapter;
+    //パッケージ名を含めた文字列をキーとすることでユニークなものにしている
+    public final static String EXTRA_TASK = "jp.next.coby.rariru.selfmanageapp.TASK";
+
+    //Realmの設定
+    private Realm mRealm;
+    private RealmChangeListener mRealmListener = new RealmChangeListener() {
+        @Override
+        public void onChange(Object o) {
+            reloadListView();
+        }
+    };
 
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
@@ -146,6 +165,10 @@ public class MainActivity extends AppCompatActivity
         //GestureDetectorインスタンス作成
         //mGestureDetector = new GestureDetector(this,this);
 
+        //Realmの設定
+        mRealm = Realm.getDefaultInstance();
+        mRealm.addChangeListener(mRealmListener);
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,9 +177,12 @@ public class MainActivity extends AppCompatActivity
                 if (mGenre == 0) {
                     Snackbar.make(view, "ジャンルを選択して下さい", Snackbar.LENGTH_LONG).show();
                     return;
-                }else if(mGenre == 1){
+                } else if (mGenre == 1) {
                     //個人用タグでの挙動
-                }else if(mGenre == 2){
+                    Intent intent = new Intent(getApplicationContext(), InputActivity.class);
+                    intent.putExtra("genre", mGenre);
+                    startActivity(intent);
+                } else if (mGenre == 2) {
                     //共通タグでの挙動
                     // ログイン済みのユーザーを取得する
                     user = FirebaseAuth.getInstance().getCurrentUser();
@@ -199,27 +225,69 @@ public class MainActivity extends AppCompatActivity
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                user = FirebaseAuth.getInstance().getCurrentUser();
-                // if(user != null) {
-                // Questionのインスタンスを渡して質問詳細画面を起動する
-                Intent intent = new Intent(getApplicationContext(), TaskDetailActivity.class);
-                intent.putExtra("question", mQuestionArrayList.get(position));
-                startActivity(intent);
-               /* }else{
-                    Snackbar.make(view, "ログインしてから選択してください", Snackbar.LENGTH_LONG).show();
-                }*/
+                if (mGenre == 1) {
+                    Task task = (Task) parent.getAdapter().getItem(position);
+
+                    Intent intent = new Intent(getApplicationContext(), InputActivity.class);
+                    intent.putExtra("genre", mGenre);
+                    intent.putExtra(EXTRA_TASK, task.getId());
+                    startActivity(intent);
+                } else if (mGenre == 2) {
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+
+                    if (user != null) {
+                        // Questionのインスタンスを渡して質問詳細画面を起動する
+                        Intent intent = new Intent(getApplicationContext(), TaskDetailActivity.class);
+                        intent.putExtra("question", mQuestionArrayList.get(position));
+                        startActivity(intent);
+                    } else if (user == null) {
+                        Snackbar.make(view, "ログインしてから選択してください", Snackbar.LENGTH_LONG).show();
+                        /*// ログインしていなければログイン画面に遷移させる
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(intent);*/
+                    }
+                }
             }
         });
 
-        /*mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent,View view,int position,long id){
-                Intent intent = new Intent(getApplicationContext(),TaskDetailActivity.class);
-                startActivity(intent);
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mGenre == 1) {
+                    // タスクを削除する
+
+                    final Task task = (Task) parent.getAdapter().getItem(position);
+
+                    // ダイアログを表示する
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                    builder.setTitle("削除");
+                    builder.setMessage(task.getTitle() + "を削除しますか");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            //idがtask.getId()と一致するTaskを取得
+                            RealmResults<Task> results = mRealm.where(Task.class).equalTo("id", task.getId()).findAll();
+
+                            mRealm.beginTransaction();
+                            results.deleteAllFromRealm();
+                            mRealm.commitTransaction();
+
+                            reloadListView();
+                        }
+                    });
+                    builder.setNegativeButton("CANCEL", null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+
                 return true;
             }
-        });*/
+        });
 
+        //reloadListView();
     }
 
 
@@ -262,14 +330,12 @@ public class MainActivity extends AppCompatActivity
             //fab.setVisibility(View.INVISIBLE);
 
             mTaskAdapter = new SmallTaskAdapter(MainActivity.this);
+            //addTaskForTest();
             reloadListView();
         } else if (id == R.id.nav_life) {
             mToolbar.setTitle("共通");
             mGenre = 2;
             fab.setVisibility(View.VISIBLE);
-
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
 
             // --- ここから ---
             // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
@@ -290,20 +356,23 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-
+        //ドロワーをしまう処理
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
 
         return true;
     }
 
     //個人用タグリスト編集メソッド
-    private void reloadListView(){
-        List<String> taskList = new ArrayList<>();
-        taskList.add("aaa");
+    private void reloadListView() {
+        // Realmデータベースから、「全てのデータを取得して新しい日時順に並べた結果」を取得
+        RealmResults<Task> taskRealmResults = mRealm.where(Task.class).findAll().sort("date", Sort.DESCENDING);
 
-        mTaskAdapter.setSmallTaskList(taskList);
+        mTaskAdapter.setSmallTaskList(mRealm.copyFromRealm(taskRealmResults));
         mListView.setAdapter(mTaskAdapter);
         mTaskAdapter.notifyDataSetChanged();
     }
+
 
     @Override
     protected void onResume() {
@@ -325,6 +394,13 @@ public class MainActivity extends AppCompatActivity
         if (mGenre == 0) {
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mRealm.close();
     }
 
 

@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -29,7 +30,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TimePicker;
-import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,7 +49,7 @@ import java.util.Map;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class TaskSendActivity extends AppCompatActivity implements View.OnClickListener, DatabaseReference.CompletionListener {
+public class InputActivity extends AppCompatActivity implements View.OnClickListener, DatabaseReference.CompletionListener{
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private static final int CHOOSER_REQUEST_CODE = 100;
@@ -67,12 +68,15 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
     private Button mDateButton, mTimeButton, mCategoryButton;
     private String dateString, timeString;
 
+    //写真用
+    private BitmapDrawable drawable;
+
     private Task mTask;
 
     private View.OnClickListener mOnDataClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(TaskSendActivity.this,
+            DatePickerDialog datePickerDialog = new DatePickerDialog(InputActivity.this,
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -90,7 +94,7 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
     private View.OnClickListener mOnTimeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(TaskSendActivity.this,
+            TimePickerDialog timePickerDialog = new TimePickerDialog(InputActivity.this,
                     new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -130,6 +134,7 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
 
         mSendButton = (Button) findViewById(R.id.sendButton);
         mSendButton.setOnClickListener(this);
+        mSendButton.setText("OK");
 
         mImageView = (ImageView) findViewById(R.id.imageView);
         mImageView.setOnClickListener(this);
@@ -137,7 +142,8 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("投稿中...");
 
-        //追加用部品
+
+        //UI部品追加
         //日時用
         mDateButton = (Button) findViewById(R.id.date_button);
         mDateButton.setOnClickListener(mOnDataClickListener);
@@ -146,13 +152,41 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         mCategoryButton = (Button) findViewById(R.id.category_button);
         mCategoryButton.setOnClickListener(mOnCategoryClickListener);
 
-        //現在時刻の取得
-        Calendar calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        mMinute = calendar.get(Calendar.MINUTE);
+        //追加部品
+        // EXTRA_TASK から Task の id を取得して、 id から Task のインスタンスを取得する
+        Intent intent = getIntent();
+        int taskId = intent.getIntExtra(MainActivity.EXTRA_TASK, -1);
+        Realm realm = Realm.getDefaultInstance();
+        mTask = realm.where(Task.class).equalTo("id", taskId).findFirst();
+        realm.close();
+
+        if (mTask == null) {
+            // 新規作成の場合
+            Calendar calendar = Calendar.getInstance();
+            mYear = calendar.get(Calendar.YEAR);
+            mMonth = calendar.get(Calendar.MONTH);
+            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            mHour = calendar.get(Calendar.HOUR_OF_DAY);
+            mMinute = calendar.get(Calendar.MINUTE);
+        } else {
+            // 更新の場合
+            mTitleText.setText(mTask.getTitle());
+            mBodyText.setText(mTask.getContents());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(mTask.getDate());
+            mYear = calendar.get(Calendar.YEAR);
+            mMonth = calendar.get(Calendar.MONTH);
+            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            mHour = calendar.get(Calendar.HOUR_OF_DAY);
+            mMinute = calendar.get(Calendar.MINUTE);
+
+            String dateString = mYear + "/" + String.format("%02d", (mMonth + 1)) + "/" + String.format("%02d", mDay);
+            String timeString = String.format("%02d", mHour) + ":" + String.format("%02d", mMinute);
+            mDateButton.setText(dateString);
+            mTimeButton.setText(timeString);
+        }
+
     }
 
     @Override
@@ -203,7 +237,7 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         if (v == mImageView) {
             // パーミッションの許可状態を確認する
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     // 許可されている
                     showChooser();
                 } else {
@@ -220,50 +254,8 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
             InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-
-            DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference genreRef = dataBaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
-
-            //groupIDの保存用
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            DatabaseReference groupIDRef = dataBaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.GroupID);
-
-            Map<String, String> data = new HashMap<String, String>();
-
-            // UID
-            data.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            // タイトルと本文を取得する
-            String title = mTitleText.getText().toString();
-            String body = mBodyText.getText().toString();
-
-
-            if (title.length() == 0) {
-                // 質問が入力されていない時はエラーを表示するだけ
-                Snackbar.make(v, "タイトルを入力して下さい", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            if (body.length() == 0) {
-                // 質問が入力されていない時はエラーを表示するだけ
-                Snackbar.make(v, "質問を入力して下さい", Snackbar.LENGTH_LONG).show();
-                return;
-            }
-
-            // Preferenceから名前を取る
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            String name = sp.getString(Const.NameKEY, "");
-
-            data.put("title", title);
-            data.put("body", body);
-            data.put("name", name);
-
-            //日時の情報
-            data.put("date", dateString);
-            data.put("time", timeString);
-
             // 添付画像を取得する
-            BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
+            drawable = (BitmapDrawable) mImageView.getDrawable();
 
             // 添付画像が設定されていれば画像を取り出してBASE64エンコードする
             if (drawable != null) {
@@ -271,18 +263,13 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
                 String bitmapString = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-
-                data.put("image", bitmapString);
             }
 
-            genreRef.push().setValue(data, this);
-            groupIDRef.push().setValue(title, this);
+                addTask();
+                finish();
 
         }
-
-        mProgress.show();
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -323,6 +310,49 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         startActivityForResult(chooserIntent, CHOOSER_REQUEST_CODE);
     }
 
+    private void addTask() {
+        Realm realm = Realm.getDefaultInstance();
+
+        //Realmにデータの追加、削除などの変更を行う場合の処理
+        //realm.commitTransaction();で囲む
+        realm.beginTransaction();
+
+        if (mTask == null) {
+            // 新規作成の場合
+            mTask = new Task();
+
+            RealmResults<Task> taskRealmResults = realm.where(Task.class).findAll();
+
+            int identifier;
+            if (taskRealmResults.max("id") != null) {
+                identifier = taskRealmResults.max("id").intValue() + 1;
+            } else {
+                identifier = 0;
+            }
+            mTask.setId(identifier);
+            Log.d("cat","タスクがnullです");
+        }else{
+            //Toast.makeText(this,"タスクがnullではありません",Toast.LENGTH_LONG).show();
+            Log.d("cat","タスクがnullではありません");
+        }
+
+        String title = mTitleText.getText().toString();
+        String content = mBodyText.getText().toString();
+
+        mTask.setTitle(title);
+        mTask.setContents(content);
+        GregorianCalendar calendar = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
+        Date date = calendar.getTime();
+        mTask.setDate(date);
+
+        //写真データの保存
+        //mTask.setBytes(drawable);
+
+        realm.copyToRealmOrUpdate(mTask);
+        realm.commitTransaction();
+
+        realm.close();
+    }
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {

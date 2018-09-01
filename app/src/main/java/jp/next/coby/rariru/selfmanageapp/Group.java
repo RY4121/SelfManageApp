@@ -12,7 +12,7 @@ public class Group implements Serializable {
     private String mQuestionUid;//タスクのID
     private int mGenre;//タスクのジャンル
     private byte[] mBitmapArray;
-    private ArrayList<Answer> mAnswerArrayList;
+    private ArrayList<Answer> mAnswerArrayList;//小タスクリスト
 
     private String mDate;//日時
     private String mTime;

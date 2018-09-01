@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+//Realm用の記述
+apply plugin: 'realm-android'    // これを追加
 
 android {
     compileSdkVersion 27
