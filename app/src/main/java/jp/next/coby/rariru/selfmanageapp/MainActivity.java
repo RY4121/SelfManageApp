@@ -15,16 +15,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.support.v7.widget.SearchView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,9 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -66,7 +61,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton fab;
 
     //個人タグ用の変数
-    private SmallTaskAdapter mTaskAdapter;
+    private PrivateTaskAdapter mTaskAdapter;
     //パッケージ名を含めた文字列をキーとすることでユニークなものにしている
     public final static String EXTRA_TASK = "jp.next.coby.rariru.selfmanageapp.TASK";
 
@@ -334,7 +329,8 @@ public class MainActivity extends AppCompatActivity
             // String searchResult = mSearchView.toString();
             //Build the query looking at all users;
             RealmResults<Task> query = mRealm.where(Task.class)
-                    .like("title","*"+searchWord+"*").findAll();
+                    .like("title","*"+searchWord+"*")
+                    .findAll();
             // 上記の結果を、TaskList としてセットする
             mTaskAdapter.setSmallTaskList(mRealm.copyFromRealm(query));
             // TaskのListView用のアダプタに渡す
@@ -356,11 +352,11 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
-            //startActivity(intent);
+            startActivity(intent);
             return true;
         } else if (id == R.id.action_profiles) {
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-            //startActivity(intent);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -376,7 +372,7 @@ public class MainActivity extends AppCompatActivity
             mGenre = 1;
             //fab.setVisibility(View.INVISIBLE);
 
-            mTaskAdapter = new SmallTaskAdapter(MainActivity.this);
+            mTaskAdapter = new PrivateTaskAdapter(MainActivity.this);
             //addTaskForTest();
             reloadListView();
         } else if (id == R.id.nav_life) {
@@ -429,13 +425,13 @@ public class MainActivity extends AppCompatActivity
         user = FirebaseAuth.getInstance().getCurrentUser();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        MenuItem menuItem = menu.findItem(R.id.nav_favorite);
+        MenuItem menuItem = menu.findItem(R.id.nav_favorite);//お気に入り欄
 
         if (user == null) {//ログインしていないとき
             menuItem.setVisible(false);
         } else {
-            //menuItem.setVisible(true);
-            menuItem.setVisible(false);
+            menuItem.setVisible(true);
+            //menuItem.setVisible(false);
         }
 
         //2018年9月1日公開用処理
@@ -443,7 +439,7 @@ public class MainActivity extends AppCompatActivity
         menuItem1 = menu.findItem(R.id.nav_hobby);
         //menuItem1.setVisible(false);
         menuItem2 = menu.findItem(R.id.nav_life);
-        menuItem2.setVisible(false);
+        //menuItem2.setVisible(false);
 
 
         // 1:趣味を既定の選択とする
@@ -459,58 +455,4 @@ public class MainActivity extends AppCompatActivity
         mRealm.close();
     }
 
-
-    /*@Override
-    public boolean onTouchEvent(MotionEvent event){
-        if(mGestureDetector.onTouchEvent(event)){
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDown(MotionEvent motionEvent) {//ダウン時に呼ばれる
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent motionEvent) {//プレス時に呼ばれる
-    }
-
-    @Override
-    public void onLongPress(MotionEvent motionEvent) {//長押し時に呼ばれる
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent motionEvent) {//アップ時に呼ばれる
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {//スクロール時に呼ばれる
-        return false;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float x, float y) {//フリック時に呼ばれる
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        Log.v("Test", "onDoubleTapEvent()");
-        return false;
-    }
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        Log.v("Test", "onDoubleTap()");
-        return false;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        Log.v("Test", "onSingleTapConfirmed()");
-        return false;
-    }*/
 }

@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">SelfManageApp</string>
     <string name="action_settings">Settings</string>
+
+    //"趣味", "生活", "健康", "仕事", "学校", "勉強", "娯楽"
+
+    <string-array name="list">
+        <item>趣味</item>
+        <item>生活</item>
+        <item>健康</item>
+        <item>仕事</item>
+        <item>学校</item>
+        <item>勉強</item>
+        <item>娯楽</item>
+        <item>その他</item>
+    </string-array>
 </resources>

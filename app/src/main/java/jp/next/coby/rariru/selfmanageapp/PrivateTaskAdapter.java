@@ -12,12 +12,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class SmallTaskAdapter extends BaseAdapter{
+public class PrivateTaskAdapter extends BaseAdapter{
 
     private LayoutInflater mLayoutInflater;
     private List<Task> mTaskList;
 
-    public SmallTaskAdapter(Context context){
+    public PrivateTaskAdapter(Context context){
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -43,19 +43,21 @@ public class SmallTaskAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         if(convertView == null){
-            convertView = mLayoutInflater.inflate(android.R.layout.simple_list_item_2,null);
+            convertView = mLayoutInflater.inflate(R.layout.list_smallquestions,null);
         }
 
         //UI部品の取得
-        TextView textView1 = (TextView) convertView.findViewById(android.R.id.text1);
-        TextView textView2 = (TextView) convertView.findViewById(android.R.id.text2);
+        TextView mTitleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
+        TextView mCategoryTextView = (TextView) convertView.findViewById(R.id.categoryTextView);
+        TextView mDateTimeTextView = (TextView) convertView.findViewById(R.id.DateTimeTextView);
 
         // 後でTaskクラスから情報を取得するように変更する
-        textView1.setText(mTaskList.get(position).getTitle());
+        mTitleTextView.setText(mTaskList.get(position).getTitle());
+        mCategoryTextView.setText(mTaskList.get(position).getCategory());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.JAPANESE);
         Date date = mTaskList.get(position).getDate();
-        textView2.setText(simpleDateFormat.format(date));
+        mDateTimeTextView.setText(simpleDateFormat.format(date));
 
         return convertView;
     }

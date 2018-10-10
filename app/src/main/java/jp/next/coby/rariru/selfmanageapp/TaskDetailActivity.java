@@ -127,6 +127,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
+        //気になるところ
         module = new TasksListAdapter(this);
         //module.TaskListAdapter(mQuestion);
 

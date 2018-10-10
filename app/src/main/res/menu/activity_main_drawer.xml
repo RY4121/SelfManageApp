@@ -8,6 +8,13 @@
         <item
             android:id="@+id/nav_life"
             android:title="共通"/>
+
+        <item
+            android:id = "@+id/nav_computer"
+            android:title = "CS"/>
+        <item
+            android:id = "@+id/nav_biological"
+            android:title = "BS"/>
         <item
             android:id = "@+id/nav_favorite"
             android:title = "お気に入り"/>

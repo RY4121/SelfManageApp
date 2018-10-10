@@ -27,10 +27,12 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -66,11 +68,17 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
     private Uri mPictureUri;
 
     //追加用
-    private Button mCancelButton;
+    private Button mCancelButton,mCategoryButton;
     private EditText mCategoryText;
+
+    //CategoryActiityからの値を保持する変数
+    private String mCategoryName;
+    //Spinner用の処理
+    private Spinner mSpinner;
+    private String SpiText;
     //日時ボタンの処理用
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private Button mDateButton, mTimeButton, mCategoryButton;
+    private Button mDateButton, mTimeButton;
     private String dateString, timeString;
 
     //写真用
@@ -113,14 +121,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    private View.OnClickListener mOnCategoryClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //カテゴリー選択ボタンが押された時の処理
-            Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
-            startActivity(intent);
-        }
-    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +131,9 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         // 渡ってきたジャンルの番号を保持する
         Bundle extras = getIntent().getExtras();
         mGenre = extras.getInt("genre");
+
+        //追加
+        mCategoryName = extras.getString("categoryName");
 
         // UIの準備
         setTitle("タスク作成");
@@ -151,19 +155,20 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
 
         //UI部品追加
         mCancelButton = (Button) findViewById(R.id.cancel_button);
+        mCancelButton.setOnClickListener(this);
+        mCategoryButton = (Button) findViewById(R.id.category_button);
+        mCategoryButton.setOnClickListener(this);
+        mSpinner = (Spinner)findViewById(R.id.spinner);
+        mSpinner.setOnItemSelectedListener(mCategoryClickListener);
 
         //日時用
         mDateButton = (Button) findViewById(R.id.date_button);
         mDateButton.setOnClickListener(mOnDataClickListener);
         mTimeButton = (Button) findViewById(R.id.times_button);
         mTimeButton.setOnClickListener(mOnTimeClickListener);
-        mCategoryButton = (Button) findViewById(R.id.category_button);
-        mCategoryButton.setOnClickListener(mOnCategoryClickListener);
-        mCategoryButton.setVisibility(View.INVISIBLE);
+
 
         //追加部品
-
-
         // EXTRA_TASK から Task の id を取得して、 id から Task のインスタンスを取得する
         Intent intent = getIntent();
         int taskId = intent.getIntExtra(MainActivity.EXTRA_TASK, -1);
@@ -183,6 +188,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
             // 更新の場合
             mTitleText.setText(mTask.getTitle());
             mBodyText.setText(mTask.getContents());
+            mCategoryText.setText(mTask.getCategory());
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(mTask.getDate());
@@ -199,6 +205,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -278,11 +285,33 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
 
             addTask();
             finish();
-
-        } else if (v == mCancelButton) {
-            finish();
+        }else if (v == mCancelButton) {
+            //キャンセルボタンが押された時の処理
+            /*Snackbar.make(v,"戻るボタンがクリックされました",Snackbar.LENGTH_LONG);
+            Log.d("tag","戻るボタンがクリックされました");*/
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+        }else if(v == mCategoryButton){
+            //カテゴリー選択ボタンが押された時の処理
+            Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
+            startActivity(intent);
         }
     }
+
+    private AdapterView.OnItemSelectedListener mCategoryClickListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Spinner spinner = (Spinner) parent;
+            //選択されたアイテムを取得
+            String item = (String) spinner.getSelectedItem();
+            SpiText = item;
+            Toast.makeText(getApplicationContext(), item, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -357,6 +386,8 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         mTask.setContents(content);
 
         mTask.setCategory(category);
+        mTask.setCategory(SpiText);
+        //mTask.setCategory(mCategoryName);
 
         GregorianCalendar calendar = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
         Date date = calendar.getTime();

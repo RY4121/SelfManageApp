@@ -65,4 +65,6 @@ public class Group implements Serializable {
         mDate = date;
         mTime = time;
     }
+
+
 }
