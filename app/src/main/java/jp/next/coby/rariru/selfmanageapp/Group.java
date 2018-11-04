@@ -67,4 +67,16 @@ public class Group implements Serializable {
     }
 
 
+    public Group(String name,String uid){
+        this.mName = name;
+        this.mUid = uid;
+    }
+
+    public Group(String name,String uid,String faculty){
+        this(name,uid);
+        this.mTitle = faculty;
+    }
+
+
+
 }

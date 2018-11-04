@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        android:id="@+id/calendar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- 全体の設定：背景色、文字の色、文字のサイズ -->
+    app:compactCalendarBackgroundColor="@android:color/white"
+    app:compactCalendarTextColor="@android:color/brown"
+    app:compactCalendarTextSize="16sp"
+
+    <!-- 当日の設定：当日の背景色、Indicatorのスタイル、文字の色 -->
+    app:compactCalendarCurrentDayBackgroundColor="@android:color/red"
+    app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
+    app:compactCalendarCurrentDayTextColor="@android:color/white"
+
+    <!-- 選択日の設定：選択した日の背景色、Indicatorのスタイル、文字の色 -->
+    app:compactCalendarCurrentSelectedDayBackgroundColor="@android:color/white"
+    app:compactCalendarCurrentSelectedDayIndicatorStyle="fill_large_indicator"
+    app:compactCalendarCurrentSelectedDayTextColor="@android:color/red"
+
+    <!-- イベントの設定：イベントのIndicatorのスタイル、3つ以上のイベントがあるときに表示される文字の色 -->
+    app:compactCalendarEventIndicatorStyle="small_indicator"
+    app:compactCalendarMultiEventIndicatorColor="@android:color/orange"
+    />
+
+</android.support.constraint.ConstraintLayout>

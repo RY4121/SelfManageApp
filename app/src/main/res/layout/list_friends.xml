@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/UserNameTextView"
+        android:layout_width="262dp"
+        android:layout_height="23dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="18dp"
+        android:text="ユーザー名"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/facultyTextView"
+        android:layout_width="46dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/UserNameTextView"
+        android:layout_toEndOf="@+id/UserNameTextView"
+        android:layout_alignBottom="@+id/UserNameTextView"
+        android:text="学部"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <TextView
+        android:id="@+id/UIDTextView"
+        android:layout_width="292dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/titleTextView"
+        android:text="UID"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+</RelativeLayout>

@@ -17,6 +17,18 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_friendSearch"
+        android:orderInCategory="100"
+        android:title="友達検索"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_window"
+        android:orderInCategory="100"
+        android:title="窓口取り扱い"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/search_menu_search_view"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always"

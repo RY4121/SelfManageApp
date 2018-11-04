@@ -31,8 +31,8 @@ public class TaskAlarmReceiver extends BroadcastReceiver{
 
         // 通知の設定を行う
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default");
-        builder.setSmallIcon(R.drawable.small_icon);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.large_icon));
+        builder.setSmallIcon(R.mipmap.icon2);
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon2_alarm));
         builder.setWhen(System.currentTimeMillis());
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setAutoCancel(true);

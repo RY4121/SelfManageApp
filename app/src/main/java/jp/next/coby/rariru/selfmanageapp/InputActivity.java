@@ -33,6 +33,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -69,7 +70,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
 
     //追加用
     private Button mCancelButton,mCategoryButton;
-    private EditText mCategoryText;
+    private TextView mCategoryText;
 
     //CategoryActiityからの値を保持する変数
     private String mCategoryName;
@@ -140,7 +141,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
 
         mTitleText = (EditText) findViewById(R.id.titleText);
         mBodyText = (EditText) findViewById(R.id.bodyText);
-        mCategoryText = (EditText) findViewById(R.id.category_edit_text);
+        mCategoryText = (TextView) findViewById(R.id.category_text);
 
         mSendButton = (Button) findViewById(R.id.sendButton);
         mSendButton.setOnClickListener(this);
@@ -156,8 +157,8 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         //UI部品追加
         mCancelButton = (Button) findViewById(R.id.cancel_button);
         mCancelButton.setOnClickListener(this);
-        mCategoryButton = (Button) findViewById(R.id.category_button);
-        mCategoryButton.setOnClickListener(this);
+        //mCategoryButton = (Button) findViewById(R.id.category_button);
+        //mCategoryButton.setOnClickListener(this);
         mSpinner = (Spinner)findViewById(R.id.spinner);
         mSpinner.setOnItemSelectedListener(mCategoryClickListener);
 
@@ -291,10 +292,6 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
             Log.d("tag","戻るボタンがクリックされました");*/
             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
             startActivity(intent);
-        }else if(v == mCategoryButton){
-            //カテゴリー選択ボタンが押された時の処理
-            Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
-            startActivity(intent);
         }
     }
 
@@ -385,7 +382,7 @@ public class InputActivity extends AppCompatActivity implements View.OnClickList
         mTask.setTitle(title);
         mTask.setContents(content);
 
-        mTask.setCategory(category);
+        //mTask.setCategory(category);
         mTask.setCategory(SpiText);
         //mTask.setCategory(mCategoryName);
 

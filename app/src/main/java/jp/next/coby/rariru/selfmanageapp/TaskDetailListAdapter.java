@@ -102,6 +102,7 @@ public class TaskDetailListAdapter extends BaseAdapter {
                 imageView.setImageBitmap(image);
             }
 
+
             //追加した処理
             mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -118,10 +119,19 @@ public class TaskDetailListAdapter extends BaseAdapter {
             TextView UIDTextView = (TextView) convertView.findViewById(R.id.UIDTextView);
             UIDTextView.setText(uid);
             TextView mUIDTextView = (TextView) convertView.findViewById(R.id.mUIDTextView);
-            //mUIDTextView.setText("タスク作成者のUID");
+
+            TextView GidTextView = (TextView)convertView.findViewById(R.id.GidTextView);
+            TextView mGidTextView = (TextView)convertView.findViewById(R.id.mGidTextView);
+            mGidTextView.setText(mQustion.getQuestionUid());
 
 
             Button button = (Button) convertView.findViewById(R.id.DeleteButton);
+            user = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if(user.equals(uid)){
+                //ログインユーザーのUidがタスク作成者のUidと一致するときのみタスクを削除できる
+                //つまり、タスク作成者のみが削除の処理を行える。
+                button.setVisibility(View.INVISIBLE);
+            }
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -142,7 +152,7 @@ public class TaskDetailListAdapter extends BaseAdapter {
 
             Answer answer = mQustion.getAnswers().get(position - 1);
             String body = answer.getBody();
-            String name = answer.getName();
+            String uid = answer.getUid();
 
 
             user = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -151,7 +161,7 @@ public class TaskDetailListAdapter extends BaseAdapter {
             bodyTextView.setText(body);
 
             TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
-            nameTextView.setText(user);
+            nameTextView.setText(uid);
             
         }
 

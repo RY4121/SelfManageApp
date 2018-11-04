@@ -35,7 +35,7 @@ public class FavoriteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
 
-        setTitle("お気に入り");
+        setTitle("お気に入り画面");
 
         // ListViewの準備
         mListView = (ListView) findViewById(R.id.favoritelistView);
@@ -76,7 +76,6 @@ public class FavoriteActivity extends AppCompatActivity {
             //String fGenre = (String)Fmap.get("Genre");
 
             mfavoriteRef = mDataBaseReference.child(Const.ContentsPATH).child(valueOf(fGenre)).child(fID);
-            //mfavoriteRef = mDataBaseReference.child(Const.ContentsPATH).child(fGenre).child(fID);
             mfavoriteRef.addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override

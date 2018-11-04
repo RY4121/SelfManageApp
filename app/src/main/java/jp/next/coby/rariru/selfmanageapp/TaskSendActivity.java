@@ -25,9 +25,11 @@ import android.util.Base64;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.support.v7.widget.Toolbar;
 
@@ -64,10 +66,13 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
 
     //日時ボタンの処理用
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private Button mDateButton, mTimeButton, mCategoryButton;
+    private Button mDateButton, mTimeButton,mFriendAddButton;
     private String dateString, timeString;
+    private TextView mDateTextView;
 
     private Task mTask;
+
+    private CheckBox checkBox[] = new CheckBox[1];
 
     private View.OnClickListener mOnDataClickListener = new View.OnClickListener() {
         @Override
@@ -104,19 +109,43 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         }
     };
 
-    private View.OnClickListener mOnCategoryClickListener = new View.OnClickListener() {
+
+    private View.OnClickListener mOnFriendAddClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             //カテゴリー選択ボタンが押された時の処理
-            Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
+            boolean CheckBoxFlag = true;
+            int check = 5;
+            Intent intent = new Intent(getApplicationContext(),FriendAcitivity.class);
+            intent.putExtra("CheckBoxFlag",CheckBoxFlag);
             startActivity(intent);
         }
     };
+
+    /*private View.OnClickListener mOnChechClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            boolean check = checkBox[0].isChecked();
+            if(check){
+                checkBox[0].setText("チェックされました");
+            }else{
+                checkBox[0].setText("チェックされてない");
+            }
+        }
+    };*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_send);
+
+        /*チェックボックス
+        checkBox[0] = findViewById(R.id.checkbox_1);
+        checkBox[0].setChecked(false);
+        checkBox[0].setText("まだチェックされてないよ");
+        checkBox[0].setOnClickListener(mOnChechClickListener);
+        */
 
         // 渡ってきたジャンルの番号を保持する
         Bundle extras = getIntent().getExtras();
@@ -143,8 +172,11 @@ public class TaskSendActivity extends AppCompatActivity implements View.OnClickL
         mDateButton.setOnClickListener(mOnDataClickListener);
         mTimeButton = (Button) findViewById(R.id.times_button);
         mTimeButton.setOnClickListener(mOnTimeClickListener);
-        mCategoryButton = (Button) findViewById(R.id.category_button);
-        mCategoryButton.setOnClickListener(mOnCategoryClickListener);
+        mDateTextView = (TextView)findViewById(R.id.dateTextView);
+        //友達リスト
+        mFriendAddButton = (Button)findViewById(R.id.friendAdd_button);
+        mFriendAddButton.setOnClickListener(mOnFriendAddClickListener);
+
 
         //現在時刻の取得
         Calendar calendar = Calendar.getInstance();

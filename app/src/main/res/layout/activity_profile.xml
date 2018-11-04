@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
@@ -23,13 +23,20 @@
         android:id="@+id/UIDTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/mUIDTextView"
+        android:layout_centerHorizontal="true"
         android:text="UID"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/mEmailTextView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp"
         android:text="ログイン中のアカウントのメールアドレス"
         android:textStyle="bold" />
 
@@ -37,11 +44,65 @@
         android:id="@+id/EmailTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/mEmailTextView"
+        android:layout_centerHorizontal="true"
         android:text="email"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/attendButton"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/frame_style"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/attendButtonText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/attendButton"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="cursive"
+        android:text="AttendanceButton"
+        android:textAlignment="center"
+        android:textColor="#3E2723"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/MailList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/spinner"
+        android:layout_centerHorizontal="true"
+        android:text="教授メールアドレス検索"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="352dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mailEditText"
+        android:layout_alignStart="@+id/mUIDTextView"
+        android:entries="@array/MailList"
+        android:spinnerMode="dialog" />
+
+    <EditText
+        android:id="@+id/mailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="87dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp"
+        android:hint="メールアドレスはここに表示されます" />
 
 
-
-</LinearLayout>
+</RelativeLayout>
 
 

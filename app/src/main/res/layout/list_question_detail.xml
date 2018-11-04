@@ -56,19 +56,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="179dp"
+        android:layout_marginTop="203dp"
         android:text="Task削除" />
 
     <TextView
         android:id="@+id/UIDTextView"
-        android:layout_width="268dp"
+        android:layout_width="271dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/DeleteButton"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="-179dp"
         android:layout_marginStart="129dp"
         android:text="タスク作成者のUID"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="italic" />
 
     <TextView
         android:id="@+id/mUIDTextView"
@@ -78,5 +80,28 @@
         android:layout_below="@+id/DateTextView"
         android:text="タスク作成者のUID:"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <TextView
+        android:id="@+id/GidTextView"
+        android:layout_width="122dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/DeleteButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-203dp"
+        android:text="タスクID："
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/mGidTextView"
+        android:layout_width="255dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/DeleteButton"
+        android:layout_alignStart="@+id/UIDTextView"
+        android:layout_marginBottom="-203dp"
+        android:text="タスクID"
+        android:textAppearance="@android:style/TextAppearance.WindowTitle"
+        android:textColor="?android:attr/colorPressedHighlight" />
 
 </RelativeLayout>

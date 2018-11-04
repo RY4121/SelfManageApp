@@ -141,7 +141,8 @@ public class TaskDetailActivity extends AppCompatActivity {
                     // ログインしていなければログイン画面に遷移させる
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
-                } else {//ログインしている時の処理
+                } else {
+                    //ログインしている時の処理
                     // Questionを渡して回答作成画面を起動する
                     // --- ここから ---
                     Intent intent = new Intent(getApplicationContext(), AnswerSendActivity.class);

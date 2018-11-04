@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ff9800</color>
-    <color name="colorPrimaryDark">#e47504</color>
-    <color name="colorAccent">#009688</color>
+    <color name="colorPrimary">#C2185B</color>
+    <color name="colorPrimaryDark">#880E4F</color>
+    <color name="colorAccent">#81D4FA</color>
     <color name="colorButtonText">#FFFFFF</color>
 </resources>
+
+
+    <!--#AD1457 変更後のcolorPrimaryDark-->
+
+    <!--#ff9800 変更前のcolorPrimary-->
+    <!--#e47504 変更前のcolorPrimaryDark-->
+    <!--#009688 変更前のcolorAccent-->
+

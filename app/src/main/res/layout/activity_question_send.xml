@@ -61,43 +61,61 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
+        android:id="@+id/sendButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="投稿"
-        android:textColor="@color/colorButtonText"
-        android:background="@drawable/custom_button"
-        android:id="@+id/sendButton"
-        android:layout_below="@+id/imageView"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginBottom="73dp"
+        android:background="@drawable/custom_button"
+        android:text="投稿"
+        android:textColor="@color/colorButtonText" />
 
     <Button
         android:id="@+id/date_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="107dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sendButton"
-        android:layout_centerHorizontal="true"
+        android:layout_height="63dp"
+        android:layout_below="@+id/imageView"
+        android:layout_toStartOf="@+id/times_button"
         android:text="----/--/--" />
 
     <Button
         android:id="@+id/times_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sendButton"
-        android:layout_toEndOf="@+id/date_button"
-        android:layout_alignTop="@id/date_button"
+        android:layout_height="64dp"
+        android:layout_below="@+id/imageView"
+        android:layout_toEndOf="@+id/checkbox_1"
         android:text="--:--" />
 
-    <Button
-        android:id="@+id/category_button"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/date_button"
-        android:background="@drawable/custom_button"
-        android:text="カテゴリー選択ボタン"
+        android:layout_below="@+id/imageView"
+        android:text="日時の設定" />
+
+
+    <Button
+        android:id="@+id/friendAdd_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_above="@+id/sendButton"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/ic_launcher_background"
+        android:text="ユーザー選択"
+        android:textAppearance="@style/TextAppearance.AppCompat"
         android:textColor="@color/colorButtonText" />
+
+    <CheckBox
+        android:id="@+id/checkbox_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textSize="18sp" />
 
 </RelativeLayout>

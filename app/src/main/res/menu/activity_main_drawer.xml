@@ -4,19 +4,38 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_hobby"
-            android:title="個人"/>
+            android:icon="@drawable/private_task"
+            android:title="個人" />
+
+        <item
+            android:id="@+id/nav_new"
+            android:icon="@drawable/new_task"
+            android:title="新着"/>
+
         <item
             android:id="@+id/nav_life"
+            android:icon="@drawable/public_task"
             android:title="共通"/>
 
         <item
-            android:id = "@+id/nav_computer"
-            android:title = "CS"/>
-        <item
-            android:id = "@+id/nav_biological"
-            android:title = "BS"/>
-        <item
             android:id = "@+id/nav_favorite"
+            android:icon="@drawable/star_2"
             android:title = "お気に入り"/>
+        <item
+            android:id = "@+id/nav_friend"
+            android:icon="@drawable/friend_list"
+            android:title = "友達リスト"/>
+        <item
+            android:id = "@+id/nav_map"
+            android:icon="@drawable/map"
+            android:title = "学内マップ" />
+        <item
+            android:id = "@+id/nav_timeTable"
+            android:icon="@drawable/time_table"
+            android:title = "時間割" />
+        <item
+            android:id="@+id/nav_attend"
+            android:icon="@drawable/attend"
+            android:title="出席"/>
     </group>
 </menu>

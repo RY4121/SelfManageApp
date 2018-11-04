@@ -4,14 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.StringPrepParseException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText mEmailEditText;
     EditText mPasswordEditText;
     EditText mNameEditText;
+    EditText mFacultyEditText;
     ProgressDialog mProgress;
 
     FirebaseAuth mAuth;
@@ -41,8 +46,14 @@ public class LoginActivity extends AppCompatActivity {
     OnCompleteListener<AuthResult> mLoginListener;
     DatabaseReference mDataBaseReference;
 
+    //Spinner用の処理
+    Spinner mSpinner;
+    String SpiText;
+
     // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     boolean mIsCreateAccount = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,27 +107,41 @@ public class LoginActivity extends AppCompatActivity {
                     if (mIsCreateAccount) {
                         // アカウント作成の時は表示名をFirebaseに保存する
                         String name = mNameEditText.getText().toString();
+                        String faculty = SpiText;
+
+                        String uid = user.getUid();
 
                         String email = user.getEmail();
                         String password = mPasswordEditText.getText().toString();
 
                         Map<String, String> data = new HashMap<String, String>();
                         data.put("name", name);
+                        data.put("faculty",faculty);
+                        data.put("uid",uid);
 
                         data.put("email", email);
                         data.put("password",password);
+
 
                         user.sendEmailVerification();
                         userRef.setValue(data);
 
                         // 表示名をPrefarenceに保存する
                         saveName(name);
-                    } else {//ログインボタンを押したときの処理
+                    } else {
+                        //ログインボタンを押したときの処理
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 Map data = (Map) snapshot.getValue();
-                                saveName((String)data.get("name"));
+                                try{
+                                    saveName((String)data.get("name"));
+                                }catch (Exception e){
+                                    //ログインした際、表示名が取得できなかったときの処理（仮定）
+                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                    startActivity(intent);
+                                }
+
                             }
                             @Override
                             public void onCancelled(DatabaseError firebaseError) {
@@ -150,6 +175,9 @@ public class LoginActivity extends AppCompatActivity {
         mEmailEditText = (EditText) findViewById(R.id.emailText);
         mPasswordEditText = (EditText) findViewById(R.id.passwordText);
         mNameEditText = (EditText) findViewById(R.id.nameText);
+
+        mSpinner = (Spinner)findViewById(R.id.spinner);
+        mSpinner.setOnItemSelectedListener(mCategoryClickListener);
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("処理中...");
@@ -201,6 +229,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    private AdapterView.OnItemSelectedListener mCategoryClickListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Spinner spinner = (Spinner) parent;
+            //選択されたアイテムを取得
+            String item = (String) spinner.getSelectedItem();
+            SpiText = item;
+            Toast.makeText(getApplicationContext(), item, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
 
     private void createAccount(String email, String password) {
         // プログレスダイアログを表示する

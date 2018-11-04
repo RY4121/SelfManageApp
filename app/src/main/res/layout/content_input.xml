@@ -25,12 +25,12 @@
         android:layout_below="@id/titleText"
         android:hint="内容" />
 
-    <EditText
-        android:id="@+id/category_edit_text"
+    <TextView
+        android:id="@+id/category_text"
         android:layout_width="183dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/bodyText"
-        android:hint="カテゴリー名入力用" />
+        android:hint="カテゴリー名" />
 
     <Button
         android:id="@+id/date_button"
@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/category_edit_text"
+        android:layout_below="@+id/category_text"
         android:layout_toLeftOf="@+id/times_button"
         android:text="----/--/--" />
 
@@ -48,7 +48,7 @@
         android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/category_edit_text"
+        android:layout_below="@+id/category_text"
         android:text="--:--" />
 
     <Button
@@ -67,21 +67,12 @@
         android:layout_toLeftOf="@+id/sendButton"
         android:text="戻る" />
 
-    <Button
-        android:id="@+id/category_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sendButton"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/custom_button"
-        android:text="カテゴリー選択ボタン"
-        android:textColor="@color/colorButtonText" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="104dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/category_edit_text"
+        android:layout_alignBottom="@+id/category_text"
         android:layout_alignEnd="@+id/titleText"
         android:entries="@array/list"
         android:spinnerMode="dialog" />

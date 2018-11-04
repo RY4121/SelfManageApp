@@ -12,6 +12,8 @@ public class Const {
 
     //Firebaseのユーザー欄にgroupIDを保存するパス
     public static final String GroupID = "groupID";
+    //友達情報を保存するパス
+    public static final String FriendsPATH = "friendID";
 
 
     //Preferenceに表示名を保存するときのキー

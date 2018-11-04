@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">SelfManageApp</string>
+    <string name="app_name">ガクNEO</string>
     <string name="action_settings">Settings</string>
 
+    //app_name = "SelfManageApp"
     //"趣味", "生活", "健康", "仕事", "学校", "勉強", "娯楽"
 
     <string-array name="list">
@@ -14,4 +15,26 @@
         <item>娯楽</item>
         <item>その他</item>
     </string-array>
+
+    <string-array name="facultyList">
+        <item>CS</item>
+        <item>BS</item>
+        <item>ES</item>
+        <item>MS</item>
+    </string-array>
+
+    <string-array name="MailList">
+        <item>ここから選んでください</item>
+        <item>松下宗一郎</item>
+        <item>宇田隆哉</item>
+        <item>生野壮一郎</item>
+        <item>布田裕一</item>
+        <item>山本進</item>
+        <item>柴田千尋</item>
+        <item>喜田義弘</item>
+        <item>松岡丈平</item>
+        <item>相田紗織</item>
+
+    </string-array>
+
 </resources>

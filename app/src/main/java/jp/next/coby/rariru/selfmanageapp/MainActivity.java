@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +70,9 @@ public class MainActivity extends AppCompatActivity
 
     //検索ボックス
     SearchView mSearchView;
+    //共通タスクの検索ワードを保存する変数
+    static String SearchWord;
+    boolean SearchFlag = false;
 
     //Realmの設定
     private Realm mRealm;
@@ -80,37 +86,99 @@ public class MainActivity extends AppCompatActivity
     private ChildEventListener mEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            HashMap map = (HashMap) dataSnapshot.getValue();
-            String title = (String) map.get("title");
-            String body = (String) map.get("body");
-            String name = (String) map.get("name");
-            String uid = (String) map.get("uid");
-            String imageString = (String) map.get("image");
-            byte[] bytes;
-            if (imageString != null) {
-                bytes = Base64.decode(imageString, Base64.DEFAULT);
-            } else {
-                bytes = new byte[0];
-            }
-            String date = (String) map.get("date");
-            String time = (String) map.get("time");
+            final String fID = dataSnapshot.getKey();
 
-            ArrayList<Answer> answerArrayList = new ArrayList<Answer>();
-            HashMap answerMap = (HashMap) map.get("answers");
-            if (answerMap != null) {
-                for (Object key : answerMap.keySet()) {
-                    HashMap temp = (HashMap) answerMap.get((String) key);
-                    String answerBody = (String) temp.get("body");
-                    String answerName = (String) temp.get("name");
-                    String answerUid = (String) temp.get("uid");
-                    Answer answer = new Answer(answerBody, answerName, answerUid, (String) key);
-                    answerArrayList.add(answer);
+            if (SearchFlag == true) {
+                if (SearchWord.equals(fID)) {
+                    mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(valueOf(mGenre)).child(SearchWord);
+                    mGenreRef.addListenerForSingleValueEvent(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    //検索を実行した時SearchFlagはtrueに入り、なおかつ検索が成功するとfalseに入り、
+                                /*ArrayList<String> Smap = new ArrayList<String>();
+                                Smap.add((String)dataSnapshot.getValue());*/
+                                /*HashMap Smap = (HashMap) dataSnapshot.getValue();
+                                final String SUid = (String) Smap.get("uid");*/
+                                    HashMap map = (HashMap) dataSnapshot.getValue();
+                                    String title = (String) map.get("title");
+                                    String body = (String) map.get("body");
+                                    String name = (String) map.get("name");
+                                    String uid = (String) map.get("uid");
+                                    String imageString = (String) map.get("image");
+                                    byte[] bytes;
+                                    if (imageString != null) {
+                                        bytes = Base64.decode(imageString, Base64.DEFAULT);
+                                    } else {
+                                        bytes = new byte[0];
+                                    }
+                                    String date = (String) map.get("date");
+                                    String time = (String) map.get("time");
+
+                                    ArrayList<Answer> answerArrayList = new ArrayList<Answer>();
+                                    HashMap answerMap = (HashMap) map.get("answers");
+                                    if (answerMap != null) {
+                                        for (Object key : answerMap.keySet()) {
+                                            HashMap temp = (HashMap) answerMap.get((String) key);
+                                            String answerBody = (String) temp.get("body");
+                                            String answerName = (String) temp.get("name");
+                                            String answerUid = (String) temp.get("uid");
+                                            Answer answer = new Answer(answerBody, answerName, answerUid, (String) key);
+                                            answerArrayList.add(answer);
+                                        }
+                                    }
+
+                                    Group question = new Group(title, body, name, uid, dataSnapshot.getKey(), mGenre, bytes, answerArrayList, date, time);
+                                    mQuestionArrayList.add(question);
+                                    mAdapter.notifyDataSetChanged();
+                                    Toast.makeText(getApplicationContext(), "Search succeeded", Toast.LENGTH_LONG).show();
+                                    SearchFlag = false;
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "Search failed", Toast.LENGTH_LONG).show();
                 }
             }
 
-            Group question = new Group(title, body, name, uid, dataSnapshot.getKey(), mGenre, bytes, answerArrayList, date, time);
-            mQuestionArrayList.add(question);
-            mAdapter.notifyDataSetChanged();
+            if (SearchFlag == false) {
+                HashMap map = (HashMap) dataSnapshot.getValue();
+                String title = (String) map.get("title");
+                String body = (String) map.get("body");
+                String name = (String) map.get("name");
+                String uid = (String) map.get("uid");
+                String imageString = (String) map.get("image");
+                byte[] bytes;
+                if (imageString != null) {
+                    bytes = Base64.decode(imageString, Base64.DEFAULT);
+                } else {
+                    bytes = new byte[0];
+                }
+                String date = (String) map.get("date");
+                String time = (String) map.get("time");
+
+                ArrayList<Answer> answerArrayList = new ArrayList<Answer>();
+                HashMap answerMap = (HashMap) map.get("answers");
+                if (answerMap != null) {
+                    for (Object key : answerMap.keySet()) {
+                        HashMap temp = (HashMap) answerMap.get((String) key);
+                        String answerBody = (String) temp.get("body");
+                        String answerName = (String) temp.get("name");
+                        String answerUid = (String) temp.get("uid");
+                        Answer answer = new Answer(answerBody, answerName, answerUid, (String) key);
+                        answerArrayList.add(answer);
+                    }
+                }
+
+                Group question = new Group(title, body, name, uid, dataSnapshot.getKey(), mGenre, bytes, answerArrayList, date, time);
+                mQuestionArrayList.add(question);
+                mAdapter.notifyDataSetChanged();
+            }
+
+
         }
 
         @Override
@@ -316,7 +384,11 @@ public class MainActivity extends AppCompatActivity
         // ★  追加
         MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
         mSearchView = (android.support.v7.widget.SearchView) menuItem.getActionView();
-        mSearchView.setQueryHint("タスク名検索キーワード");
+        if (mGenre == 1) {
+            mSearchView.setQueryHint("タスク名検索キーワード");
+        } else {
+            mSearchView.setQueryHint("共通タスク名検索キーワード");
+        }
         mSearchView.setOnQueryTextListener(this.onQueryTextListener);
 
         return true;
@@ -326,18 +398,31 @@ public class MainActivity extends AppCompatActivity
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String searchWord) {
-            // String searchResult = mSearchView.toString();
-            //Build the query looking at all users;
-            RealmResults<Task> query = mRealm.where(Task.class)
-                    .like("title","*"+searchWord+"*")
-                    .findAll();
-            // 上記の結果を、TaskList としてセットする
-            mTaskAdapter.setSmallTaskList(mRealm.copyFromRealm(query));
-            // TaskのListView用のアダプタに渡す
-            mListView.setAdapter(mTaskAdapter);
-            // 表示を更新するために、アダプターにデータが変更されたことを知らせる
-            mTaskAdapter.notifyDataSetChanged();
+            if (mGenre == 1) {
+                // String searchResult = mSearchView.toString();
+                //Build the query looking at all users;
+                RealmResults<Task> query = mRealm.where(Task.class)
+                        .like("title", "*" + searchWord + "*")
+                        .findAll();
+                // 上記の結果を、TaskList としてセットする
+                mTaskAdapter.setSmallTaskList(mRealm.copyFromRealm(query));
+                // TaskのListView用のアダプタに渡す
+                mListView.setAdapter(mTaskAdapter);
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged();
+            } else if (mGenre == 2) {
+                //共通タスクのときの検索模様
+                mQuestionArrayList.clear();
+                mAdapter.setQuestionArrayList(mQuestionArrayList);
+                mListView.setAdapter(mAdapter);
+
+                SearchFlag = true;
+                SearchWord = searchWord;
+                mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
+                mGenreRef.addChildEventListener(mEventListener);
+            }
             return true;
+
         }
 
         @Override
@@ -345,6 +430,7 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
     };
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -356,6 +442,12 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.action_profiles) {
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_friendSearch) {
+            Intent intent = new Intent(getApplicationContext(), FriendSearchActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_window) {
+            Intent intent = new Intent(getApplicationContext(), PdfActivity.class);
             startActivity(intent);
         }
 
@@ -371,10 +463,13 @@ public class MainActivity extends AppCompatActivity
             mToolbar.setTitle("個人");
             mGenre = 1;
             //fab.setVisibility(View.INVISIBLE);
-
             mTaskAdapter = new PrivateTaskAdapter(MainActivity.this);
             //addTaskForTest();
             reloadListView();
+        } else if (id == R.id.nav_new) {
+            mToolbar.setTitle("新着");
+            //do nothing
+            return true;
         } else if (id == R.id.nav_life) {
             mToolbar.setTitle("共通");
             mGenre = 2;
@@ -393,10 +488,36 @@ public class MainActivity extends AppCompatActivity
             mGenreRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre));
             mGenreRef.addChildEventListener(mEventListener);
         } else if (id == R.id.nav_favorite) {
+            //お気に入り画面に遷移
+            mToolbar.setTitle("お気に入り");
             Intent intent = new Intent(getApplicationContext(), FavoriteActivity.class);
             //intent.putExtra("question", mQuestion);
             startActivity(intent);
             return true;
+        } else if (id == R.id.nav_friend) {
+            //友達リスト画面に遷移
+            mToolbar.setTitle("友達リスト");
+            Intent intent = new Intent(getApplicationContext(), FriendAcitivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.nav_map) {
+            //友達リスト画面に遷移
+            mToolbar.setTitle("学内マップ");
+            Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.nav_timeTable) {
+            //時間割画面に遷移
+            mToolbar.setTitle("時間割");
+            Intent intent = new Intent(getApplicationContext(), TimeTableActivity.class);
+            startActivity(intent);
+            return true;
+        }else if(id == R.id.nav_attend){
+            mToolbar.setTitle("出席");
+            Uri uri = Uri.parse("https://service.cloud.teu.ac.jp/portal/index");
+            Intent i = new Intent(Intent.ACTION_VIEW,uri);
+            startActivity(i);
+            return  true;
         }
 
         //ドロワーをしまう処理
@@ -426,26 +547,32 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_favorite);//お気に入り欄
+        MenuItem menuItem1 = menu.findItem(R.id.nav_friend);//友達リスト
 
         if (user == null) {//ログインしていないとき
             menuItem.setVisible(false);
+            menuItem1.setVisible(false);
         } else {
             menuItem.setVisible(true);
-            //menuItem.setVisible(false);
+            menuItem1.setVisible(true);
         }
 
-        //2018年9月1日公開用処理
-        MenuItem menuItem1,menuItem2;
+
+
+
+        /*2018年9月1日公開用処理
+        MenuItem menuItem1, menuItem2;
         menuItem1 = menu.findItem(R.id.nav_hobby);
         //menuItem1.setVisible(false);
         menuItem2 = menu.findItem(R.id.nav_life);
-        //menuItem2.setVisible(false);
+        //menuItem2.setVisible(false);*/
 
 
-        // 1:趣味を既定の選択とする
+        //1:趣味を既定の選択とする
         if (mGenre == 0) {
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
+
     }
 
     @Override
