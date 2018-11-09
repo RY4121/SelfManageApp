@@ -1,11 +1,13 @@
 package jp.next.coby.rariru.selfmanageapp;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.joanzapata.pdfview.PDFView;
 public class MapActivity extends AppCompatActivity {
     ImageView imageView;
     Button button;
+    Button mGoogleButton;
 
     private static float SCALESIZE = 2.4f;
 
@@ -35,6 +38,16 @@ public class MapActivity extends AppCompatActivity {
 
         final PDFView pdfView = (PDFView)findViewById(R.id.pdfview);
         pdfView.fromAsset("学内マップ.pdf").load();
+
+        mGoogleButton = (Button)findViewById(R.id.googleButton);
+        mGoogleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("geo:35.626304,139.33935?q=東京工科大学");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
 
         /*imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.img3);

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,7 +27,7 @@ import static java.lang.String.valueOf;
 
 public class AnswerSendActivity extends AppCompatActivity implements View.OnClickListener, DatabaseReference.CompletionListener {
 
-    private EditText mAnswerEditText;
+    private EditText mAnswerEditText,mAnswerBodyEditText;
     private Group mQuestion;
     private ProgressDialog mProgress;
 
@@ -75,7 +76,9 @@ public class AnswerSendActivity extends AppCompatActivity implements View.OnClic
         mQuestion = (Group) extras.get("question");
 
         // UIの準備
-        mAnswerEditText = (EditText) findViewById(R.id.answerEditText);
+        mAnswerEditText = (EditText) findViewById(R.id.answerTitleEditText);
+        mAnswerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        mAnswerBodyEditText = (EditText) findViewById(R.id.answerBodyEditText);
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("投稿中...");
 
@@ -101,30 +104,35 @@ public class AnswerSendActivity extends AppCompatActivity implements View.OnClic
         InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
+
         dataBaseReference = FirebaseDatabase.getInstance().getReference();
         answerRef = dataBaseReference.child(Const.ContentsPATH).child(valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child(Const.AnswersPATH);
 
-        Map<String, String> data = new HashMap<String, String>();
 
+        Map<String, String> data = new HashMap<String, String>();
 
         // UID
         data.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-/*
+
         // 表示名
-        // Preferenceから名前を取る
+        //Preferenceから名前を取る
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String name = sp.getString(Const.NameKEY, "");
-        data.put("name", name);*/
+        data.put("name", name);
 
-        // 回答を取得する
-        String answer = mAnswerEditText.getText().toString();
-
-        if (answer.length() == 0) {
+        // タイトルを取得する
+        String answerTitle = mAnswerEditText.getText().toString();
+        if (answerTitle.length() == 0) {
             // 回答が入力されていない時はエラーを表示するだけ
-            Snackbar.make(v, "タスクを入力して下さい", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(v, "タイトルを入力してください", Snackbar.LENGTH_LONG).show();
             return;
         }
-        data.put("body", answer);
+        data.put("title", answerTitle);
+
+        //内容を取得する
+        String answerBody = mAnswerBodyEditText.getText().toString();
+        data.put("body", answerBody);
+
 
         mProgress.show();
         answerRef.push().setValue(data, this);

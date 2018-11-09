@@ -518,7 +518,49 @@ public class MainActivity extends AppCompatActivity
             Intent i = new Intent(Intent.ACTION_VIEW,uri);
             startActivity(i);
             return  true;
-        }
+        }/*else if(id == R.id.nav_outside){
+            //外部アプリケーションに遷移する処理。
+            mToolbar.setTitle("外部アプリ遷移");
+            */
+
+            //暗黙的インテント
+            /*GooglePlus
+            Intent intent = new Intent(Intent.ACTION_MAIN); //act
+            intent.setAction("android.intent.category.LAUNCHER"); // cat
+            intent.setClassName("com.google.android.apps.plus",
+                    "com.google.android.apps.plus.phone.HomeActivity"); // cmp 省略せずに書く
+            //intent.setFlgs(0x10200000); //flgs ここはIntentの定数を使用するのがいい
+            */
+            /*YouTube
+            package:com.google.android.youtube
+            classname:com.google.android.youtube.app.honeycomb.Shell$HomeActivity
+            */
+            /*Google翻訳
+            pack:com.google.android.apps.translate
+            className:com.google.android.apps.translate.TranslateActivity
+            */
+            /*Line
+            package:jp.naver.line.android
+            className:jp.naver.line.android.activity.SplashActivity
+            */
+            /*GoogleMap
+            com.google.android.apps.maps
+            com.google.android.maps.MapsActivity
+             */
+            /*ドキュメント
+            com.google.android.apps.docs.editors.docs
+            com.google.android.apps.docs.app.NewMainProxyActivity
+             */
+            /*ドキュメント
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setAction("android.intent.category.LAUNCHER");
+            intent.setClassName("com.google.android.apps.docs.editors.docs",
+                    "com.google.android.apps.docs.app.NewMainProxyActivity");
+
+            startActivity(intent);
+            return true;
+
+        }*/
 
         //ドロワーをしまう処理
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

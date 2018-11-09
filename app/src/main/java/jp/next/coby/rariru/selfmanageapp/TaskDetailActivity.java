@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -126,6 +127,17 @@ public class TaskDetailActivity extends AppCompatActivity {
         mAdapter = new TaskDetailListAdapter(this, mQuestion);
         mListView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(),AnswerDetailActivity.class);
+                intent.putExtra("question",mQuestion);
+                startActivity(intent);
+            }
+        });
+
 
         //気になるところ
         module = new TasksListAdapter(this);

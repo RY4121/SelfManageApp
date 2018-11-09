@@ -67,7 +67,7 @@
         android:layout_alignBottom="@+id/attendButton"
         android:layout_centerHorizontal="true"
         android:fontFamily="cursive"
-        android:text="AttendanceButton"
+        android:text="Gmail"
         android:textAlignment="center"
         android:textColor="#3E2723"
         android:textSize="30sp"

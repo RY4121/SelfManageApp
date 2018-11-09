@@ -87,7 +87,7 @@ public class TimeTableActivity extends AppCompatActivity {
         MtextView3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v,"研究棟A403 13:15-14:45",Snackbar.LENGTH_LONG)
+                Snackbar.make(v,"研究棟A403 13:15-14:45",Snackbar.LENGTH_INDEFINITE)
                         .setAction("講義ページへ", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -137,16 +137,22 @@ public class TimeTableActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Snackbar.make(v,"講義実験棟307 10:45-12:15",Snackbar.LENGTH_LONG)
-                        .setAction("翻訳ページへ", new View.OnClickListener() {
+                        .setAction("翻訳アプリへ", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                webView.setWebViewClient(new WebViewClient(){
+                                /*webView.setWebViewClient(new WebViewClient(){
                                     @Override
                                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                                         return false;
                                     }
                                 });
                                 webView.loadUrl("https://ejje.weblio.jp/");
+                                */
+                                Intent intent = new Intent(Intent.ACTION_MAIN);
+                                intent.setAction("android.intent.category.LAUNCHER");
+                                intent.setClassName("com.google.android.apps.translate",
+                                        "com.google.android.apps.translate.TranslateActivity");
+                                startActivity(intent);
                             }
                         }).show();
             }
@@ -246,7 +252,7 @@ public class TimeTableActivity extends AppCompatActivity {
                                 Uri uri = Uri.parse("https://service.cloud.teu.ac.jp/moodle3/course/view.php?id=9881");
                                 Intent i = new Intent(Intent.ACTION_VIEW,uri);
                                 startActivity(i);
-                                webView.loadUrl("https://service.cloud.teu.ac.jp/moodle3/course/view.php?id=9881");
+                                //webView.loadUrl("https://service.cloud.teu.ac.jp/moodle3/course/view.php?id=9881");
                             }
                         }).show();
             }
@@ -257,16 +263,20 @@ public class TimeTableActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Snackbar.make(v,"講義実験棟301 13:15-14:45",Snackbar.LENGTH_LONG)
-                        .setAction("翻訳ページへ", new View.OnClickListener() {
+                        .setAction("リスニングページへ", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                webView.setWebViewClient(new WebViewClient(){
+                                /*webView.setWebViewClient(new WebViewClient(){
                                     @Override
                                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                                         return false;
                                     }
                                 });
-                                webView.loadUrl("https://translate.weblio.jp/");
+                                webView.loadUrl("https://text.asahipress.com/free/player/index.html?bookcode=215618");
+                                */
+                                Uri uri = Uri.parse("https://text.asahipress.com/free/player/index.html?bookcode=215618");
+                                Intent i = new Intent(Intent.ACTION_VIEW,uri);
+                                startActivity(i);
                             }
                         }).show();
             }

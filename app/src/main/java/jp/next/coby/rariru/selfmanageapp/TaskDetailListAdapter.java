@@ -42,6 +42,7 @@ public class TaskDetailListAdapter extends BaseAdapter {
     private DatabaseReference mDatabaseReference, mDeleteRef;
     private String user;
 
+    private ArrayList<Answer> mAnswerArrayList;
     private Context mContext;
 
     public TaskDetailListAdapter(Context context, Group question) {
@@ -83,6 +84,7 @@ public class TaskDetailListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (getItemViewType(position) == TYPE_QUESTION) {
+            //共通：詳細タスクの情報のリストビューの動き
             if (convertView == null) {
                 convertView = mLayoutInflater.inflate(R.layout.list_question_detail, parent, false);
             }
@@ -146,19 +148,21 @@ public class TaskDetailListAdapter extends BaseAdapter {
                 }
             });
         } else {
+            //アンサー用のリストビューの動き
             if (convertView == null) {
                 convertView = mLayoutInflater.inflate(R.layout.list_answer, parent, false);
             }
 
             Answer answer = mQustion.getAnswers().get(position - 1);
-            String body = answer.getBody();
+
+            String title = answer.getName();
             String uid = answer.getUid();
 
 
             user = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            TextView bodyTextView = (TextView) convertView.findViewById(R.id.bodyTextView);
-            bodyTextView.setText(body);
+            TextView titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
+            titleTextView.setText(title);
 
             TextView nameTextView = (TextView) convertView.findViewById(R.id.nameTextView);
             nameTextView.setText(uid);
@@ -166,6 +170,12 @@ public class TaskDetailListAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    //Answer型のArrayListの値の受け渡し
+    //Group型のArrayListとは異なる。
+    public void setAnswerArrayList(ArrayList<Answer> answerArrayList){
+        this.mAnswerArrayList = answerArrayList;
     }
 
 }

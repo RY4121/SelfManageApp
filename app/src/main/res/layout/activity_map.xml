@@ -10,7 +10,23 @@
 
     <com.joanzapata.pdfview.PDFView
         android:id="@+id/pdfview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_width="355dp"
+        android:layout_height="452dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp" />
+
+    <Button
+        android:id="@+id/googleButton"
+        android:layout_width="336dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/holo_green_dark"
+        android:fontFamily="cursive"
+        android:text="GoogleMap"
+        android:textAppearance="@android:style/TextAppearance.Holo.Widget.PopupMenu.Large"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
 
 </RelativeLayout>

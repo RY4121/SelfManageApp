@@ -37,5 +37,12 @@
             android:id="@+id/nav_attend"
             android:icon="@drawable/attend"
             android:title="出席"/>
+
+        <!--
+        <item
+            android:id="@+id/nav_outside"
+            android:icon="@color/colorPrimary"
+            android:title="外部アプリ"/>
+            !-->
     </group>
 </menu>
